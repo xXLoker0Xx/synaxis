@@ -4,6 +4,7 @@ import Slider from '@react-native-community/slider';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { BookOpen, Check, Moon, Sun } from 'lucide-react-native';
+import { AppMenu } from '../../components/AppMenu';
 import { readDailyLogs, saveDailyLog, type DailyLog } from '../../data/journalStorage';
 import { theme } from '../../theme';
 
@@ -48,6 +49,7 @@ export default function DailyLogScreen() {
 
   return (
     <ScrollView style={styles.page} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <View style={styles.topbar}><Text style={styles.brand}>SYNAXIS</Text><AppMenu /></View>
       <Text style={styles.eyebrow}>OBSERVACIÓN PERSONAL</Text>
       <Text style={styles.title}>Diario diario</Text>
       <Text style={styles.intro}>{format(new Date(), "EEEE d 'de' MMMM", { locale: es })}. Registra datos sencillos para reconocer patrones propios con el tiempo.</Text>
@@ -87,7 +89,7 @@ export default function DailyLogScreen() {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: theme.background }, content: { paddingHorizontal: 22, paddingTop: 59, paddingBottom: 30 }, eyebrow: { color: theme.accent, fontSize: 9, fontWeight: '700', letterSpacing: 1.6 }, title: { color: theme.text, fontSize: 29, fontWeight: '600', letterSpacing: -0.6, marginTop: 8 }, intro: { color: theme.muted, fontSize: 12, lineHeight: 18, marginTop: 8 },
+  page: { flex: 1, backgroundColor: theme.background }, content: { paddingHorizontal: 22, paddingTop: 50, paddingBottom: 30 }, topbar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 17 }, brand: { color: theme.text, fontSize: 15, fontWeight: '700', letterSpacing: 1.1 }, eyebrow: { color: theme.accent, fontSize: 9, fontWeight: '700', letterSpacing: 1.6 }, title: { color: theme.text, fontSize: 29, fontWeight: '600', letterSpacing: -0.6, marginTop: 8 }, intro: { color: theme.muted, fontSize: 12, lineHeight: 18, marginTop: 8 },
   fieldCard: { padding: 15, backgroundColor: theme.surface, borderRadius: 17, borderColor: theme.border, borderWidth: 1, marginTop: 15 }, fieldHeading: { flexDirection: 'row', alignItems: 'center', gap: 10 }, iconBox: { width: 34, height: 34, borderRadius: 11, alignItems: 'center', justifyContent: 'center' }, fieldHeadingCopy: { flex: 1 }, fieldTitle: { color: theme.text, fontSize: 13, fontWeight: '600' }, fieldHint: { color: theme.muted, fontSize: 10, marginTop: 4 }, fieldValue: { color: theme.text, fontSize: 17, fontWeight: '700' }, unit: { color: theme.muted, fontSize: 10, fontWeight: '500' }, slider: { height: 38, marginHorizontal: -7, marginTop: 10 }, scale: { flexDirection: 'row', justifyContent: 'space-between', marginTop: -2 },
   noteCard: { padding: 15, backgroundColor: theme.surface, borderRadius: 17, borderColor: theme.border, borderWidth: 1, marginTop: 15 }, noteHeading: { flexDirection: 'row', alignItems: 'center', gap: 8 }, input: { minHeight: 112, color: theme.text, backgroundColor: theme.elevated, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 11, fontSize: 12, lineHeight: 18, marginTop: 12 }, charCount: { color: theme.muted, fontSize: 9, alignSelf: 'flex-end', marginTop: 6 },
   saveButton: { height: 49, borderRadius: 14, backgroundColor: theme.accent, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginTop: 17 }, saveText: { color: theme.background, fontSize: 12, fontWeight: '700' }, historyHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 27, marginBottom: 10 }, sectionTitle: { color: theme.text, fontSize: 16, fontWeight: '600' }, historyCount: { color: theme.muted, fontSize: 8, letterSpacing: 1 }, empty: { padding: 17, backgroundColor: theme.surface, borderRadius: 14, borderColor: theme.border, borderWidth: 1 }, emptyText: { color: theme.muted, fontSize: 11, lineHeight: 16, textAlign: 'center' }, historyCard: { padding: 13, backgroundColor: theme.surface, borderRadius: 14, borderColor: theme.border, borderWidth: 1, marginBottom: 8 }, historyDate: { color: theme.text, fontSize: 12, fontWeight: '600' }, historyMetrics: { flexDirection: 'row', gap: 16, marginTop: 8 }, historyMetric: { color: theme.muted, fontSize: 10, gap: 5 }, historyNote: { color: theme.muted, fontSize: 10, lineHeight: 15, marginTop: 8 }, disclaimer: { color: '#667080', fontSize: 9, lineHeight: 14, textAlign: 'center', marginTop: 17, paddingHorizontal: 8 },

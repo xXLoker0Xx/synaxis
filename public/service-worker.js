@@ -1,4 +1,4 @@
-const CACHE_NAME = 'biolunar-shell-v1';
+const CACHE_NAME = 'synaxis-shell-v1';
 const CORE_FILES = ['/', '/manifest.json', '/pwa-icon.svg', '/favicon.ico'];
 
 self.addEventListener('install', (event) => {
@@ -12,7 +12,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key.startsWith('biolunar-shell-') && key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(keys.filter((key) => (key.startsWith('biolunar-shell-') || key.startsWith('synaxis-shell-')) && key !== CACHE_NAME).map((key) => caches.delete(key))))
       .then(() => self.clients.claim()),
   );
 });
@@ -20,6 +20,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+  // Planet positions are time-sensitive and use Vercel's server-side Horizons proxy.
+  if (new URL(request.url).pathname.startsWith('/api/')) return;
 
   if (request.mode === 'navigate') {
     event.respondWith(

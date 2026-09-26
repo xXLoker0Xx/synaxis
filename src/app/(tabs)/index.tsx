@@ -4,6 +4,7 @@ import { ArrowUpRight, Clock3, MapPin, Sun, Sunrise, Sunset } from 'lucide-react
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { MoonDial } from '../../components/MoonDial';
+import { AppMenu } from '../../components/AppMenu';
 import { getCircadianTimeline, getLunarCycleState } from '../../core/astronomy/astronomy';
 import { useBioLunar } from '../../context/AppContext';
 import { theme } from '../../theme';
@@ -33,9 +34,9 @@ export default function HomeScreen() {
       <View style={styles.topline}>
         <View>
           <Text style={styles.eyebrow}>SISTEMA PERSONAL · {format(now, 'EEEE d MMMM', { locale: es }).toUpperCase()}</Text>
-          <Text style={styles.title}>BioLunar</Text>
+          <Text style={styles.title}>Synaxis</Text>
         </View>
-        <View style={styles.sunIcon}><Sun size={20} color={theme.accent} /></View>
+        <AppMenu />
       </View>
 
       <View style={styles.locationRow}>
@@ -93,7 +94,7 @@ function SolarEvent({ icon, label, time }: { icon: React.ReactNode; label: strin
 
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: theme.background }, content: { paddingHorizontal: 22, paddingTop: 58, paddingBottom: 28 },
-  topline: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, eyebrow: { color: theme.muted, fontSize: 9, letterSpacing: 1.5, fontWeight: '700' }, title: { color: theme.text, fontSize: 32, fontWeight: '600', letterSpacing: -0.8, marginTop: 5 }, sunIcon: { width: 42, height: 42, borderRadius: 15, backgroundColor: theme.elevated, alignItems: 'center', justifyContent: 'center' },
+  topline: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, eyebrow: { color: theme.muted, fontSize: 9, letterSpacing: 1.5, fontWeight: '700' }, title: { color: theme.text, fontSize: 32, fontWeight: '600', letterSpacing: -0.8, marginTop: 5 },
   locationRow: { marginTop: 17, flexDirection: 'row', alignItems: 'center', gap: 7 }, location: { color: theme.muted, fontSize: 11, flex: 1 }, locButton: { borderWidth: 1, borderColor: theme.border, borderRadius: 8, paddingHorizontal: 9, paddingVertical: 5 }, locButtonText: { color: theme.accent, fontWeight: '700', fontSize: 9, letterSpacing: 1 }, locationStatus: { color: '#626B7B', fontSize: 9, marginTop: 5, marginLeft: 20 },
   moonCard: { backgroundColor: theme.surface, borderColor: theme.border, borderWidth: 1, borderRadius: 23, padding: 17, marginTop: 23 }, moonCopy: { position: 'absolute', top: 20, left: 17, right: 135, zIndex: 2 }, cardEyebrow: { color: theme.muted, fontSize: 9, letterSpacing: 1.4, fontWeight: '700' }, phase: { color: theme.text, fontSize: 19, fontWeight: '600', marginTop: 7 }, phaseDescription: { color: theme.muted, fontSize: 10, lineHeight: 15, marginTop: 6 }, pill: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 5, borderRadius: 7, marginTop: 10, backgroundColor: theme.elevated }, pillText: { color: theme.accent, fontSize: 8, fontWeight: '700', letterSpacing: 0.8 }, moonStats: { flexDirection: 'row', borderTopColor: theme.border, borderTopWidth: 1, marginTop: 10, paddingTop: 13, justifyContent: 'space-between' }, statValue: { color: theme.text, fontSize: 17, fontWeight: '600' }, statSmall: { color: theme.muted, fontSize: 10, fontWeight: '400' }, statLabel: { color: theme.muted, fontSize: 8, letterSpacing: 1, marginTop: 5 },
   sectionHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 28, marginBottom: 12 }, sectionTitle: { color: theme.text, fontSize: 18, fontWeight: '600' }, sectionHint: { color: theme.muted, fontSize: 9, letterSpacing: 1.2 }, solarCard: { backgroundColor: theme.surface, borderColor: theme.border, borderWidth: 1, borderRadius: 20, padding: 17 }, solarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, solarHeadline: { color: theme.text, fontSize: 17, fontWeight: '600', marginTop: 7 }, progressTrack: { height: 5, backgroundColor: '#293140', borderRadius: 8, marginTop: 19, position: 'relative' }, progressFill: { position: 'absolute', height: 5, left: 0, top: 0, backgroundColor: theme.accent, borderRadius: 8 }, progressDot: { position: 'absolute', width: 11, height: 11, borderRadius: 6, backgroundColor: theme.text, top: -3, marginLeft: -5, borderWidth: 2, borderColor: theme.accent }, eventRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 18 }, event: { gap: 5 }, eventLabel: { color: theme.muted, fontSize: 8, letterSpacing: 0.6 }, eventTime: { color: theme.text, fontSize: 12, fontWeight: '600' },

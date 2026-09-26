@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "BioLunar · Ritmo personal",
-  "short_name": "BioLunar",
+  "name": "Synaxis · Ritmo personal",
+  "short_name": "Synaxis",
   "description": "Calendario solar, lunar y diario de reflexión personal.",
   "lang": "es",
   "start_url": "/",
@@ -28,6 +28,11 @@
       "name": "Diario diario",
       "short_name": "Diario",
       "url": "/journal"
+    },
+    {
+      "name": "Posición planetaria",
+      "short_name": "Planetas",
+      "url": "/planets"
     }
   ]
 }

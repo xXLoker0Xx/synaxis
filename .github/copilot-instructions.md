@@ -1,4 +1,4 @@
-# BioLunar workspace guidance
+# Synaxis workspace guidance
 
 - Keep the app Expo + React Native + TypeScript and follow the existing `src/app`, `src/core`, `src/data`, and `src/components` separation.
 - Keep solar/lunar computations client-side, typed, and deterministic; do not present lunar symbolism as causal or predictive.

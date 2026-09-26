@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "BioLunar",
-    "slug": "biolunar",
+    "name": "Synaxis",
+    "slug": "synaxis",
     "version": "1.0.0",
     "platforms": [
       "web"
@@ -9,8 +9,8 @@
     "web": {
       "output": "static",
       "favicon": "./assets/favicon.png",
-      "name": "BioLunar",
-      "shortName": "BioLunar",
+      "name": "Synaxis · Ritmo personal",
+      "shortName": "Synaxis",
       "lang": "es",
       "themeColor": "#0B0E15",
       "backgroundColor": "#0B0E15",

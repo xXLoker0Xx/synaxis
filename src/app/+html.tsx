@@ -11,11 +11,11 @@ export default function RootHtml({ children }: PropsWithChildren) {
         <meta name="theme-color" content="#0B0E15" />
         <meta name="description" content="Calendario solar, lunar y diario de reflexión personal." />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-title" content="BioLunar" />
+        <meta name="apple-mobile-web-app-title" content="Synaxis" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/pwa-icon.svg" type="image/svg+xml" />
-        <title>BioLunar</title>
+        <title>Synaxis</title>
         <ScrollViewStyleReset />
       </head>
       <body>{children}</body>
