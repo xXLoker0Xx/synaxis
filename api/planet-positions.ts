@@ -124,19 +124,45 @@ async function fetchPlanet(
     ANG_FORMAT: 'DEG',
     CSV_FORMAT: 'YES',
   });
-  const response = await fetch(`${HORIZONS_URL}?${params.toString()}`, {
-    signal: AbortSignal.timeout(18_000),
-    headers: { Accept: 'application/json' },
-  });
-  if (!response.ok) throw new Error(`Horizons respondió HTTP ${response.status}.`);
+  const url = `${HORIZONS_URL}?${params.toString()}`;
+  let lastError: Error | null = null;
 
-  const payload = await response.json() as HorizonsPayload;
-  return { ...planet, ...parseHorizonsResult(payload), status: 'ok' };
+  // Horizons may transiently rate-limit requests. Retry 429/503 once with a
+  // planet-specific delay so the retry wave does not hit all targets together.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        signal: AbortSignal.timeout(10_000),
+        headers: { Accept: 'application/json' },
+      });
+      if (response.status === 429 || response.status === 503) {
+        const retryAfter = Number(response.headers.get('retry-after'));
+        const delay = Number.isFinite(retryAfter) && retryAfter > 0
+          ? Math.min(retryAfter * 1000, 3_000)
+          : 900 + (Number(planet.id) % 3) * 400;
+        if (attempt === 0) {
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+        throw new Error(`JPL Horizons está temporalmente saturado (HTTP ${response.status}).`);
+      }
+      if (!response.ok) throw new Error(`Horizons respondió HTTP ${response.status}.`);
+
+      const payload = await response.json() as HorizonsPayload;
+      return { ...planet, ...parseHorizonsResult(payload), status: 'ok' };
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Error al consultar JPL Horizons.');
+      if (attempt === 0 && (lastError.name === 'AbortError' || lastError.name === 'TimeoutError')) continue;
+      break;
+    }
+  }
+
+  throw lastError ?? new Error('JPL Horizons no devolvió datos.');
 }
 
 async function fetchInBatches(latitude: number, longitude: number, requestedAt: Date): Promise<PlanetResult[]> {
   const results: PlanetResult[] = [];
-  const batchSize = 4;
+  const batchSize = 2;
   for (let start = 0; start < PLANETS.length; start += batchSize) {
     const batch = PLANETS.slice(start, start + batchSize);
     const batchResults = await Promise.all(batch.map(async (planet): Promise<PlanetResult> => {
@@ -167,13 +193,17 @@ export default async function handler(request: VercelRequest, response: VercelRe
   const latitude = Number(request.query.lat);
   const longitude = Number(request.query.lon);
   if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90 || !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
-    return response.status(400).json({ error: 'Indica latitud y longitud válidas para calcular las posiciones.' });
+    return response.status(400).json({ code: 'invalid_coordinates', error: 'Invalid observer coordinates.' });
   }
 
   const requestedAt = new Date();
   const positions = await fetchInBatches(latitude, longitude, requestedAt);
   if (positions.every((position) => position.status === 'unavailable')) {
-    return response.status(502).json({ error: 'JPL Horizons no está disponible ahora. Inténtalo de nuevo en unos minutos.' });
+    return response.status(502).json({
+      code: 'horizons_unavailable',
+      error: 'JPL Horizons is temporarily unavailable.',
+      details: positions.map(({ name, error }) => `${name}: ${error ?? 'no data'}`),
+    });
   }
 
   response.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');

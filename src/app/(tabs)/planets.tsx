@@ -62,7 +62,7 @@ export default function PlanetPositionsScreen() {
         <Text style={styles.calculateText}>{loading ? 'Consultando JPL Horizons…' : data ? 'Actualizar posiciones' : 'Calcular posiciones'}</Text>
       </Pressable>
 
-      {error ? <View style={styles.errorCard}><AlertCircle size={17} color={theme.rose} /><Text style={styles.errorText}>{error}</Text></View> : null}
+      {error ? <View style={styles.errorCard}><AlertCircle size={17} color={theme.rose} /><View style={styles.errorCopy}><Text style={styles.errorTitle}>Error de consulta</Text><Text style={styles.errorText}>{error}</Text></View></View> : null}
 
       {data ? <>
         <View style={styles.resultHeading}>
@@ -131,8 +131,8 @@ const styles = StyleSheet.create({
   permissionHint: { color: theme.muted, fontSize: 9, lineHeight: 14, marginTop: 7, marginLeft: 3 },
   calculateButton: { minHeight: 49, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, backgroundColor: theme.accent, borderRadius: 14, marginTop: 17 },
   buttonDisabled: { opacity: 0.72 }, calculateText: { color: theme.background, fontSize: 12, fontWeight: '700' },
-  errorCard: { flexDirection: 'row', gap: 9, alignItems: 'center', padding: 13, backgroundColor: '#2A191D', borderColor: '#573036', borderWidth: 1, borderRadius: 13, marginTop: 14 },
-  errorText: { color: '#F0B7B4', fontSize: 11, lineHeight: 16, flex: 1 },
+  errorCard: { flexDirection: 'row', gap: 9, alignItems: 'flex-start', padding: 13, backgroundColor: '#2A191D', borderColor: '#573036', borderWidth: 1, borderRadius: 13, marginTop: 14 },
+  errorCopy: { flex: 1 }, errorTitle: { color: theme.rose, fontSize: 10, fontWeight: '700', marginBottom: 4 }, errorText: { color: '#F0B7B4', fontSize: 11, lineHeight: 16 },
   resultHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 25, marginBottom: 11 },
   resultTitle: { color: theme.text, fontSize: 17, fontWeight: '600' }, resultDate: { color: theme.muted, fontSize: 9, marginTop: 4, textTransform: 'capitalize' },
   sourceBadge: { backgroundColor: theme.elevated, borderRadius: 8, paddingHorizontal: 9, paddingVertical: 6 }, sourceText: { color: theme.accent, fontSize: 9, fontWeight: '800', letterSpacing: 1 },
