@@ -1,0 +1,33 @@
+{
+  "id": "/",
+  "name": "BioLunar · Ritmo personal",
+  "short_name": "BioLunar",
+  "description": "Calendario solar, lunar y diario de reflexión personal.",
+  "lang": "es",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0E15",
+  "theme_color": "#0B0E15",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Brújula de decisiones",
+      "short_name": "Decisiones",
+      "url": "/oracle"
+    },
+    {
+      "name": "Diario diario",
+      "short_name": "Diario",
+      "url": "/journal"
+    }
+  ]
+}
