@@ -49,18 +49,19 @@ export default function HomeScreen() {
       <Text style={styles.locationStatus}>{locationStatus} · Los cálculos se realizan en el dispositivo</Text>
 
       <View style={styles.moonCard}>
-        <View style={styles.moonCopy}>
-          <Text style={styles.cardEyebrow}>CICLO LUNAR</Text>
-          <Text style={styles.phase}>{moon.octant}</Text>
-          <Text style={styles.phaseDescription}>Una lectura simbólica para observar, no para predecir.</Text>
-          <View style={styles.pill}><Text style={styles.pillText}>{moon.zodiacSign.toUpperCase()} · TROPICAL</Text></View>
+        <View style={styles.moonLeft}>
+          <View style={styles.moonCopy}>
+            <Text style={styles.cardEyebrow}>CICLO LUNAR</Text>
+            <Text style={styles.phase}>{moon.octant}</Text>
+            <Text style={styles.phaseDescription}>Una lectura simbólica para observar, no para predecir.</Text>
+            <View style={styles.pill}><Text style={styles.pillText}>{moon.zodiacSign.toUpperCase()} · TROPICAL</Text></View>
+          </View>
+          <View style={styles.moonStats}>
+            <View><Text style={styles.statValue}>{Math.round(moon.illumination * 100)}%</Text><Text style={styles.statLabel}>ILUMINACIÓN</Text></View>
+            <View><Text style={styles.statValue}>{moon.cycleDay.toFixed(1)}<Text style={styles.statSmall}> / 29.5</Text></Text><Text style={styles.statLabel}>DÍA DEL CICLO</Text></View>
+          </View>
         </View>
         <MoonDial state={moon} />
-        <View style={styles.moonStats}>
-          <View><Text style={styles.statValue}>{Math.round(moon.illumination * 100)}%</Text><Text style={styles.statLabel}>ILUMINACIÓN</Text></View>
-          <View><Text style={styles.statValue}>{moon.elongationDegrees.toFixed(0)}°</Text><Text style={styles.statLabel}>ELONGACIÓN</Text></View>
-          <View><Text style={styles.statValue}>{moon.cycleDay.toFixed(1)}<Text style={styles.statSmall}> / 29.5</Text></Text><Text style={styles.statLabel}>DÍA DEL CICLO</Text></View>
-        </View>
       </View>
 
       <View style={styles.sectionHeading}><Text style={styles.sectionTitle}>Ritmo solar</Text><Text style={styles.sectionHint}>HOY · HORA LOCAL</Text></View>
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: theme.background }, content: { paddingHorizontal: 22, paddingTop: 58, paddingBottom: 28 },
   topline: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, eyebrow: { color: theme.muted, fontSize: 9, letterSpacing: 1.5, fontWeight: '700' }, title: { color: theme.text, fontSize: 32, fontWeight: '600', letterSpacing: -0.8, marginTop: 5 },
   locationRow: { marginTop: 17, flexDirection: 'row', alignItems: 'center', gap: 7 }, location: { color: theme.muted, fontSize: 11, flex: 1 }, locButton: { borderWidth: 1, borderColor: theme.border, borderRadius: 8, paddingHorizontal: 9, paddingVertical: 5 }, locButtonText: { color: theme.accent, fontWeight: '700', fontSize: 9, letterSpacing: 1 }, locationStatus: { color: '#626B7B', fontSize: 9, marginTop: 5, marginLeft: 20 },
-  moonCard: { backgroundColor: theme.surface, borderColor: theme.border, borderWidth: 1, borderRadius: 23, padding: 17, marginTop: 23 }, moonCopy: { position: 'absolute', top: 20, left: 17, right: 135, zIndex: 2 }, cardEyebrow: { color: theme.muted, fontSize: 9, letterSpacing: 1.4, fontWeight: '700' }, phase: { color: theme.text, fontSize: 19, fontWeight: '600', marginTop: 7 }, phaseDescription: { color: theme.muted, fontSize: 10, lineHeight: 15, marginTop: 6 }, pill: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 5, borderRadius: 7, marginTop: 10, backgroundColor: theme.elevated }, pillText: { color: theme.accent, fontSize: 8, fontWeight: '700', letterSpacing: 0.8 }, moonStats: { flexDirection: 'row', borderTopColor: theme.border, borderTopWidth: 1, marginTop: 10, paddingTop: 13, justifyContent: 'space-between' }, statValue: { color: theme.text, fontSize: 17, fontWeight: '600' }, statSmall: { color: theme.muted, fontSize: 10, fontWeight: '400' }, statLabel: { color: theme.muted, fontSize: 8, letterSpacing: 1, marginTop: 5 },
+  moonCard: { backgroundColor: theme.surface, borderColor: theme.border, borderWidth: 1, borderRadius: 23, padding: 17, marginTop: 23, flexDirection: 'row', alignItems: 'center', gap: 12 }, moonLeft: { flex: 1 }, moonCopy: { }, cardEyebrow: { color: theme.muted, fontSize: 9, letterSpacing: 1.4, fontWeight: '700' }, phase: { color: theme.text, fontSize: 19, fontWeight: '600', marginTop: 7 }, phaseDescription: { color: theme.muted, fontSize: 10, lineHeight: 15, marginTop: 6 }, pill: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 5, borderRadius: 7, marginTop: 10, backgroundColor: theme.elevated }, pillText: { color: theme.accent, fontSize: 8, fontWeight: '700', letterSpacing: 0.8 }, moonStats: { flexDirection: 'row', borderTopColor: theme.border, borderTopWidth: 1, marginTop: 10, paddingTop: 13, justifyContent: 'space-between' }, statValue: { color: theme.text, fontSize: 17, fontWeight: '600' }, statSmall: { color: theme.muted, fontSize: 10, fontWeight: '400' }, statLabel: { color: theme.muted, fontSize: 8, letterSpacing: 1, marginTop: 5 },
   sectionHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 28, marginBottom: 12 }, sectionTitle: { color: theme.text, fontSize: 18, fontWeight: '600' }, sectionHint: { color: theme.muted, fontSize: 9, letterSpacing: 1.2 }, solarCard: { backgroundColor: theme.surface, borderColor: theme.border, borderWidth: 1, borderRadius: 20, padding: 17 }, solarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, solarHeadline: { color: theme.text, fontSize: 17, fontWeight: '600', marginTop: 7 }, progressTrack: { height: 5, backgroundColor: '#293140', borderRadius: 8, marginTop: 19, position: 'relative' }, progressFill: { position: 'absolute', height: 5, left: 0, top: 0, backgroundColor: theme.accent, borderRadius: 8 }, progressDot: { position: 'absolute', width: 11, height: 11, borderRadius: 6, backgroundColor: theme.text, top: -3, marginLeft: -5, borderWidth: 2, borderColor: theme.accent }, eventRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 18 }, event: { gap: 5 }, eventLabel: { color: theme.muted, fontSize: 8, letterSpacing: 0.6 }, eventTime: { color: theme.text, fontSize: 12, fontWeight: '600' },
   tipCard: { backgroundColor: '#131D1D', borderColor: '#253635', borderWidth: 1, borderRadius: 16, marginTop: 14, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 10 }, tipIcon: { width: 32, height: 32, borderRadius: 11, backgroundColor: '#20302E', justifyContent: 'center', alignItems: 'center' }, tipCopy: { flex: 1 }, tipTitle: { color: theme.text, fontWeight: '600', fontSize: 11 }, tipText: { color: theme.muted, fontSize: 10, lineHeight: 15, marginTop: 4 }, disclaimer: { color: '#667080', fontSize: 9, lineHeight: 14, textAlign: 'center', marginTop: 18, paddingHorizontal: 8 },
 });

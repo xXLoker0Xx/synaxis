@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'expo-router';
-import { Menu, X, MoonStar, Compass, NotebookPen, Orbit } from 'lucide-react-native';
+import { Menu, X, MoonStar, Compass, NotebookPen, Orbit, Star } from 'lucide-react-native';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { theme } from '../theme';
 
@@ -9,6 +9,7 @@ const sections = [
   { href: '/oracle', label: 'Decisiones', detail: 'Brújula personal', Icon: Compass },
   { href: '/journal', label: 'Diario', detail: 'Observaciones', Icon: NotebookPen },
   { href: '/planets', label: 'Planetas', detail: 'Efemérides JPL Horizons', Icon: Orbit },
+  { href: '/natal', label: 'Carta natal', detail: 'Tu mapa celeste', Icon: Star },
 ] as const;
 
 export function AppMenu() {

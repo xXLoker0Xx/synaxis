@@ -22,7 +22,6 @@ export function MoonDial({ state }: MoonDialProps) {
         <Path d={path} fill={theme.accent} />
         <Circle cx="50" cy="50" r="42" fill="none" stroke="#72644D" strokeWidth="0.7" />
       </Svg>
-      <Text style={styles.day}>DÍA {Math.floor(state.cycleDay)}</Text>
     </View>
   );
 }

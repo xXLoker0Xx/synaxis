@@ -11,6 +11,7 @@ export default function SectionLayout() {
       <Stack.Screen name="oracle" />
       <Stack.Screen name="journal" />
       <Stack.Screen name="planets" />
+      <Stack.Screen name="natal" />
     </Stack>
   );
 }
