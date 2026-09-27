@@ -1,54 +1,60 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable, TextInput, Alert } from 'react-native';
-import { Star, Calendar, MapPin, ChevronDown } from 'lucide-react-native';
+import { ScrollView, StyleSheet, Text, View, Pressable, TextInput, Alert, Modal } from 'react-native';
+import { Star, Calendar, MapPin, ChevronDown, Clock, X } from 'lucide-react-native';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import DatePicker from 'react-native-date-picker';
 import { AppMenu } from '../../components/AppMenu';
 import { useBioLunar } from '../../context/AppContext';
 import { calculateNatalChart, type NatalChart, type ZodiacSign } from '../../core/natal/natalChart';
 import { getSignInterpretation, getPlanetInterpretation, getHouseInterpretation } from '../../data/natalDatabase';
 import { theme } from '../../theme';
 
+// Ubicaciones preestablecidas (latitud, longitud, nombre)
+const PRESET_LOCATIONS = [
+  { label: 'Madrid', latitude: 40.4168, longitude: -3.7038 },
+  { label: 'Barcelona', latitude: 41.3851, longitude: 2.1734 },
+  { label: 'Valencia', latitude: 39.4699, longitude: -0.3763 },
+  { label: 'Sevilla', latitude: 37.3886, longitude: -5.9823 },
+  { label: 'Bilbao', latitude: 43.2627, longitude: -2.9253 },
+  { label: 'Málaga', latitude: 36.7213, longitude: -4.4215 },
+  { label: 'Ciudad de México', latitude: 19.4326, longitude: -99.1332 },
+  { label: 'Buenos Aires', latitude: -34.6037, longitude: -58.3816 },
+  { label: 'Bogotá', latitude: 4.7110, longitude: -74.0721 },
+  { label: 'Nueva York', latitude: 40.7128, longitude: -74.0060 },
+  { label: 'Londres', latitude: 51.5074, longitude: -0.1278 },
+  { label: 'París', latitude: 48.8566, longitude: 2.3522 },
+];
+
 export default function NatalChartScreen() {
   const { coordinates } = useBioLunar();
   const [birthDate, setBirthDate] = useState<Date | null>(null);
-  const [birthTime, setBirthTime] = useState('12:00');
+  const [birthHour, setBirthHour] = useState('12');
+  const [birthMinute, setBirthMinute] = useState('00');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(coordinates);
   const [natalChart, setNatalChart] = useState<NatalChart | null>(null);
   const [expandedSection, setExpandedSection] = useState<'sun' | 'moon' | 'ascendant' | 'planets' | null>('sun');
 
   const handleCalculateChart = () => {
     if (!birthDate) {
-      Alert.alert('Error', 'Por favor ingresa tu fecha de nacimiento');
+      Alert.alert('Error', 'Por favor selecciona tu fecha de nacimiento');
       return;
     }
 
-    const [hours, minutes] = birthTime.split(':').map(Number);
+    const hours = parseInt(birthHour, 10) || 0;
+    const minutes = parseInt(birthMinute, 10) || 0;
     const fullBirthDate = new Date(birthDate);
-    fullBirthDate.setHours(hours || 0, minutes || 0);
+    fullBirthDate.setHours(hours, minutes);
 
     const chart = calculateNatalChart(
       fullBirthDate,
-      coordinates.latitude,
-      coordinates.longitude,
-      coordinates.label
+      selectedLocation.latitude,
+      selectedLocation.longitude,
+      selectedLocation.label
     );
     setNatalChart(chart);
-  };
-
-  const handleDateChange = (dateString: string) => {
-    try {
-      const [day, month, year] = dateString.split('/').map(Number);
-      if (day && month && year) {
-        const date = new Date(year, month - 1, day);
-        if (!isNaN(date.getTime())) {
-          setBirthDate(date);
-          setShowDatePicker(false);
-        }
-      }
-    } catch {
-      Alert.alert('Error', 'Formato de fecha inválido. Usa DD/MM/YYYY');
-    }
   };
 
   const SignCard = ({ sign, label, meaning }: { sign: ZodiacSign; label: string; meaning?: string }) => {
@@ -92,37 +98,133 @@ export default function NatalChartScreen() {
 
       {!natalChart ? (
         <View style={styles.inputCard}>
+          {/* Date Picker Button */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Fecha de Nacimiento</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="DD/MM/YYYY"
-              value={birthDate ? format(birthDate, 'dd/MM/yyyy') : ''}
-              onChangeText={handleDateChange}
-              placeholderTextColor={theme.muted}
-            />
+            <Text style={styles.label}>📅 Fecha de Nacimiento</Text>
+            <Pressable
+              style={[styles.input, styles.datePickerButton]}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Calendar size={16} color={theme.accent} />
+              <Text style={styles.datePickerText}>
+                {birthDate ? format(birthDate, 'dd MMMM yyyy', { locale: es }) : 'Selecciona una fecha'}
+              </Text>
+            </Pressable>
           </View>
 
+          {/* Time Picker */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Hora de Nacimiento</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="HH:MM"
-              value={birthTime}
-              onChangeText={setBirthTime}
-              placeholderTextColor={theme.muted}
-            />
+            <Text style={styles.label}>🕐 Hora de Nacimiento</Text>
+            <View style={styles.timePickerContainer}>
+              <View style={styles.timeInputGroup}>
+                <Text style={styles.timeLabel}>Horas</Text>
+                <TextInput
+                  style={styles.timeInput}
+                  placeholder="00"
+                  value={birthHour}
+                  onChangeText={(text) => setBirthHour(text.slice(0, 2))}
+                  placeholderTextColor={theme.muted}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                />
+              </View>
+              <Text style={styles.timeSeparator}>:</Text>
+              <View style={styles.timeInputGroup}>
+                <Text style={styles.timeLabel}>Minutos</Text>
+                <TextInput
+                  style={styles.timeInput}
+                  placeholder="00"
+                  value={birthMinute}
+                  onChangeText={(text) => setBirthMinute(text.slice(0, 2))}
+                  placeholderTextColor={theme.muted}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                />
+              </View>
+            </View>
             <Text style={styles.hint}>Si no conoces la hora exacta, usa 12:00 (mediodía)</Text>
           </View>
 
-          <View style={styles.locationInfo}>
-            <MapPin size={14} color={theme.muted} />
-            <Text style={styles.locationText}>{coordinates.label}</Text>
+          {/* Location Selector */}
+          <View style={styles.fieldGroup}>
+            <Text style={styles.label}>📍 Localización de Nacimiento</Text>
+            <Pressable
+              style={styles.locationButton}
+              onPress={() => setShowLocationModal(true)}
+            >
+              <MapPin size={16} color={theme.accent} />
+              <View style={styles.locationContent}>
+                <Text style={styles.locationButtonText}>{selectedLocation.label}</Text>
+                <Text style={styles.locationCoords}>
+                  {selectedLocation.latitude.toFixed(2)}°, {selectedLocation.longitude.toFixed(2)}°
+                </Text>
+              </View>
+              <ChevronDown size={16} color={theme.muted} />
+            </Pressable>
           </View>
 
+          {/* Calculate Button */}
           <Pressable style={styles.calculateButton} onPress={handleCalculateChart}>
             <Text style={styles.calculateText}>Calcular Carta Natal</Text>
           </Pressable>
+
+          {/* Date Picker Modal */}
+          {showDatePicker && (
+            <DatePicker
+              modal
+              open={showDatePicker}
+              date={birthDate || new Date()}
+              onConfirm={(date) => {
+                setBirthDate(date);
+                setShowDatePicker(false);
+              }}
+              onCancel={() => setShowDatePicker(false)}
+              title="Selecciona tu fecha de nacimiento"
+              confirmText="Confirmar"
+              cancelText="Cancelar"
+              locale="es"
+              maximumDate={new Date()}
+            />
+          )}
+
+          {/* Location Modal */}
+          <Modal visible={showLocationModal} transparent animationType="slide">
+            <View style={styles.modalOverlay}>
+              <View style={styles.locationModal}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>Selecciona tu localización</Text>
+                  <Pressable onPress={() => setShowLocationModal(false)}>
+                    <X size={24} color={theme.text} />
+                  </Pressable>
+                </View>
+                <ScrollView style={styles.locationList}>
+                  {PRESET_LOCATIONS.map((location) => (
+                    <Pressable
+                      key={location.label}
+                      style={[
+                        styles.locationListItem,
+                        selectedLocation.label === location.label && styles.locationListItemActive,
+                      ]}
+                      onPress={() => {
+                        setSelectedLocation(location);
+                        setShowLocationModal(false);
+                      }}
+                    >
+                      <View style={styles.locationListContent}>
+                        <Text style={styles.locationListLabel}>{location.label}</Text>
+                        <Text style={styles.locationListCoords}>
+                          {location.latitude.toFixed(2)}° {location.longitude.toFixed(2)}°
+                        </Text>
+                      </View>
+                      {selectedLocation.label === location.label && (
+                        <View style={[styles.checkmark, { backgroundColor: theme.accent }]} />
+                      )}
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
         </View>
       ) : (
         <>
@@ -300,11 +402,41 @@ const styles = StyleSheet.create({
   fieldGroup: { marginBottom: 16 },
   label: { color: theme.text, fontSize: 11, fontWeight: '600', marginBottom: 8 },
   input: { backgroundColor: theme.elevated, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 11, color: theme.text, fontSize: 12 },
+  
+  // Date Picker Styles
+  datePickerButton: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 14, paddingVertical: 13 },
+  datePickerText: { color: theme.text, fontSize: 13, fontWeight: '500' },
+  
+  // Time Picker Styles
+  timePickerContainer: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
+  timeInputGroup: { flex: 1 },
+  timeLabel: { color: theme.muted, fontSize: 9, fontWeight: '600', marginBottom: 4 },
+  timeInput: { backgroundColor: theme.elevated, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 11, color: theme.text, fontSize: 14, fontWeight: '600', textAlign: 'center' },
+  timeSeparator: { color: theme.text, fontSize: 20, fontWeight: '700', marginBottom: 6 },
+  
+  // Location Button Styles
+  locationButton: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: theme.elevated, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 13 },
+  locationContent: { flex: 1 },
+  locationButtonText: { color: theme.text, fontSize: 13, fontWeight: '500' },
+  locationCoords: { color: theme.muted, fontSize: 9, marginTop: 2 },
+  
   hint: { color: theme.muted, fontSize: 9, marginTop: 6 },
-  locationInfo: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: theme.elevated, borderRadius: 10, padding: 10, marginBottom: 16 },
-  locationText: { color: theme.muted, fontSize: 10 },
-  calculateButton: { backgroundColor: theme.accent, borderRadius: 12, paddingVertical: 12, alignItems: 'center' },
+  
+  calculateButton: { backgroundColor: theme.accent, borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 8 },
   calculateText: { color: theme.background, fontWeight: '700', fontSize: 12 },
+
+  // Modal Styles
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', justifyContent: 'flex-end' },
+  locationModal: { backgroundColor: theme.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingBottom: 40, maxHeight: '80%' },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 22, paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: theme.border },
+  modalTitle: { color: theme.text, fontSize: 14, fontWeight: '600' },
+  locationList: { paddingHorizontal: 22 },
+  locationListItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: theme.border + '20' },
+  locationListItemActive: { backgroundColor: theme.elevated + '40', borderRadius: 8, paddingHorizontal: 12, marginHorizontal: -12 },
+  locationListContent: { flex: 1 },
+  locationListLabel: { color: theme.text, fontSize: 12, fontWeight: '500' },
+  locationListCoords: { color: theme.muted, fontSize: 9, marginTop: 2 },
+  checkmark: { width: 20, height: 20, borderRadius: 10 },
 
   chartSummary: { backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border, borderRadius: 16, padding: 17, marginBottom: 20 },
   summaryTitle: { color: theme.text, fontSize: 14, fontWeight: '600', marginBottom: 12 },
