@@ -3,6 +3,7 @@
     "name": "Synaxis",
     "slug": "synaxis",
     "version": "1.0.0",
+    "scheme": "synaxis",
     "platforms": [
       "web"
     ],
